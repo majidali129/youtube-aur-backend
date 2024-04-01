@@ -1,0 +1,27 @@
+{
+  "name": "youtube-backend",
+  "version": "1.0.0",
+  "description": "Backend for youtube app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/majidali129/youtube-aur-backend.git"
+  },
+  "keywords": [
+    "javascript",
+    "mongodb",
+    "data-modeling",
+    "backend",
+    "node",
+    "express"
+  ],
+  "author": "Majid Ali",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/majidali129/youtube-aur-backend/issues"
+  },
+  "homepage": "https://github.com/majidali129/youtube-aur-backend#readme"
+}
