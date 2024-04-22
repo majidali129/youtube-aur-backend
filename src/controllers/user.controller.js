@@ -78,25 +78,25 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   // get user credentials from frontend
   const { username, email, password } = req.body
-
+  console.log(email, password);
   // validate request
-  if (!username || !email)
+  if (!(username || email))
     throw new ApiError(400, 'username or email is required')
 
   // make db call to check if user exists
-  const user = User.findOne({
+  const user = await User.findOne({
     $or: [{ username }, { email }],
   })
-  if (!user) throw new ApiError(404, 'user does not exist')
-
+  if (!user) throw new ApiError(404, 'User does not exist')
   // check for password
-  const isPasswordCorrect = await user.isPasswordValid(password)
-  if (!isPasswordCorrect) throw new ApiError(401, 'Invalid user credentials')
+  const isPasswordCorrect = user.isPasswordValid(password)
+  if (!isPasswordCorrect) throw new ApiError(401, 'Invalid User Credentials')
 
   // set tokens (access, refresh)
   const { accessToken, refreshToken } = await setAccessAndRefreshTokens(
     user._id
   )
+  console.log(accessToken, refreshToken);
   // remove password & refreshToken from user
   const loggedInUser = await User.findById(user._id).select(
     '-password -refreshToken'
@@ -127,6 +127,28 @@ const loginUser = asyncHandler(async (req, res) => {
 const logoutUser = asyncHandler(async (req, res) => {
   // here i need to logout the user. mean need to perform db operation based upon some info about user. So, how i can access user it's a problem. because here req'll not give me user.
   // to address this issue, i can use my own middleware at this route.
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $unset: {
+        refreshToken: undefined,
+      },
+    },
+    {
+      new: true,
+    }
+  )
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  }
+
+  res
+    .status(200)
+    .clearCookie('accessToken', options)
+    .clearCookie('refreshToken', options)
+    .json(new ApiResponse(200, {}, 'User logged Out'))
 })
 
-export { registerUser, loginUser, logoutUser}
+export { registerUser, loginUser, logoutUser }
