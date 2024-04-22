@@ -55,7 +55,7 @@ userSchema.pre('save', function (next) {
   next()
 })
 // we can add methods to schema/object as per need.
-userSchema.methods.isPasswordCorrect = async function (password) {
+userSchema.methods.isPasswordValid = async function (password) {
   return await bcrypt.compare(password, this.password)
 }
 
